@@ -1,98 +1,151 @@
 
+/* 
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+
+export default function Cards({ searchTerm }) {
+    const [movies, setMovies] = useState([]);
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        const fetchMovies = async () => {
+            try {
+                setLoading(true);
+                const query = searchTerm || "Marvel";
+                const response = await fetch(`https://www.omdbapi.com/?s=${query}&apikey=${import.meta.env.VITE_API_KEY}`);
+
+
+                const result = await response.json();
+
+                if (result.Search) {
+                    setMovies(result.Search);
+
+                    console.log("Fetched Movies:", result.Search);
+
+
+                } else {
+                    setMovies([]);
+                    console.log("No movies found.");
+                }
+            } catch (error) {
+                console.error("Error fetching movies:", error);
+                setMovies([]);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchMovies();
+    }, [searchTerm]);
+
+    return (
+        <div className="container mx-auto p-6">
+            {loading ? (
+                <p className="text-center text-lg font-semibold">Loading...</p>
+            ) : movies.length > 0 ? (
+                <div className="movie-grid">
+                    {movies.map((movie) => (
+                        <div key={movie.imdbID} className="movie-item">
+                            <Link to={`/movie/${movie.imdbID}`} className="movie-title">
+                                {movie.Title}
+                            </Link>
+                            <img
+                                src={movie.Poster}
+                                alt={movie.Title}
+                                className="movie-poster"
+                                onError={(e) => {
+                                    e.target.style.display = "none";
+                                    e.target.parentNode.appendChild(document.createElement("p")).innerText =
+                                        "Poster not available";
+                                }}
+                            />
+                            <p className="movie-year">Year: {movie.Year}</p>
+                        </div>
+                    ))}
+                </div>
+            ) : (
+                <p className="text-center text-lg font-semibold">No movies found!</p>
+            )}
+        </div>
+    );
+} */
+
 
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
-//create a f. and use searchTerm as prop
-export default function Cards({ searchTerm }) {
-
-    //initialize an array to store the fetch movies data and set it as empty array
+export default function Cards({ searchTerm, addToCart }) {
     const [movies, setMovies] = useState([]);
-
-    //boolean state ehich is initially set to False
     const [loading, setLoading] = useState(false);
 
-    //useEffect:runs whenever the searchTerm changes
     useEffect(() => {
+        const fetchMovies = async () => {
+            try {
+                setLoading(true);
+                const query = searchTerm || "Marvel";
+                const response = await fetch(`https://www.omdbapi.com/?s=${query}&apikey=${import.meta.env.VITE_API_KEY}`);
+                const result = await response.json();
 
-        if (!searchTerm) return; // Do nothing if search term is empty
-
-        setLoading(true); //Marks the start of the data-fetching process by setting loading to true
-
-        //sending GET request to API
-        fetch(`http://www.omdbapi.com/?s=${searchTerm}&apikey=${import.meta.env.VITE_API_KEY}`)
-
-
-            .then((res) => res.json())//Parse JSON Response: Converts the HTTP response into a JS object
-
-            .then((result) => { //outputs the API's response to the browser console for debugging purposes.
-
-                console.log(result); // Debugging: Check the API response
-
-                setLoading(false);//: Indicates that the API request has finished
-
-                //If result.Search (array of movies) exists, update movies with the data
                 if (result.Search) {
                     setMovies(result.Search);
-
-                    //Otherwise, set movies to an empty array
                 } else {
-                    setMovies([]); // No results found
+                    setMovies([]);
                 }
-            })
-            //Stops the loading indicator in case of an error.
-            .catch((err) => {
+            } catch (error) {
+                console.error("Error fetching movies:", error);
+                setMovies([]);
+            } finally {
                 setLoading(false);
-                console.error("Error fetching movies:", err); // Handle fetch errors
-            });
-
-    }, [searchTerm]);//ensures the useEffect runs only when searchTerm changes and avoids unnecessary API calls or infinite loops
+            }
+        };
+        fetchMovies();
+    }, [searchTerm]);
 
     return (
-        <>
-            {/*class: styling perpose */}
-            <div className="movie-card">
-
-
-                {loading ? ( //Displays a "Loading..." message if loading is true
-                    <p>Loading...</p>
-                    //If movies are available (movies.length > 0), renders a list of movie cards using map()
-                ) : movies.length > 0 ? (
-                    movies.map((movie) => (
-
-                        //unique key for each movie card to help React efficiently update the DOM.
+        <div className="container mx-auto p-6">
+            {loading ? (
+                <p className="text-center text-lg font-semibold">Loading...</p>
+            ) : movies.length > 0 ? (
+                <div className="movie-grid">
+                    {movies.map((movie) => (
                         <div key={movie.imdbID} className="movie-item">
-
-                            {/*TEST... Link to the movie details page */}
-                            <Link to={`/movie/${movie.imdbID}`}>{movie.Title}</Link>
-
-
-                            {/*  <h3>{movie.Title}</h3> */} {/*Displays the movie title */}
-                            {/* test...... */}
-                            {/* Image with onError handler */}
+                            <Link to={`/movie/${movie.imdbID}`} className="movie-title">
+                                {movie.Title}
+                            </Link>
                             <img
                                 src={movie.Poster}
                                 alt={movie.Title}
-                                width={200}
+                                className="movie-poster"
                                 onError={(e) => {
-                                    e.target.style.display = "none"; // Hide the broken image
-                                    e.target.parentNode.appendChild(
-                                        document.createElement("p")
-                                    ).innerText = "Poster is not available";// Add fallback text
+                                    e.target.style.display = "none";
+                                    e.target.parentNode.appendChild(document.createElement("p")).innerText =
+                                        "Poster not available";
                                 }}
                             />
-
-                            {/*  <img src={movie.Poster} alt={movie.Title} width={200} /> */} {/* Shows the movie poster */}
-
-                            <p>Year: {movie.Year}</p> {/*   Displays the release year of the movie*/}
+                            <p className="movie-year">Year: {movie.Year}</p>
+                            <button
+                                onClick={() => addToCart(movie)}
+                                className="bg-blue-500 text-white px-3 py-1 mt-2 rounded"
+                            >
+                                Add to Cart
+                            </button>
                         </div>
-                    ))
-                ) : (
-                    <p>No movies found!</p> /* If there are no movies in the movies array, displays "No movies found!" */
-                )}
-            </div>
-
-
-        </>
+                    ))}
+                </div>
+            ) : (
+                <p className="text-center text-lg font-semibold">No movies found!</p>
+            )}
+        </div>
     );
 }
+
+
+
+
+
+
+
+
+
+
+
+
