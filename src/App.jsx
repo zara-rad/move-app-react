@@ -3,7 +3,9 @@ import Cards from "./components/Cards"
 import Header from "./components/Header"
 import MovieDetails from "./components/MovieDetails"
 import Cart from "./components/Cart"
+import Register from "./components/Register"
 import { useState, useEffect } from "react"
+import Login from "./components/Login"
 function App() {
 
   //PART of state to store the current search entered by the user,must be empty
@@ -40,10 +42,10 @@ function App() {
 
         <Route path="/" element={<Cards searchTerm={searchTerm} addToCart={addToCart} />} />
         <Route path="/movie/:imdbID" element={<MovieDetails />} />
-        <Route
-          path="/cart"
-          element={<Cart cartItems={cart} removeFromCart={removeFromCart} />}
-        />
+        <Route path="/cart" element={<Cart cartItems={cart} removeFromCart={removeFromCart} />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/login" element={<Login />} />
+
 
 
       </Routes>
